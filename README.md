@@ -1,5 +1,7 @@
 # Smart Fire Detector System
 
+This is a project for my engineering design class at RPI and is still in progress.
+
 This is a smart fire detector system designed for real-time monitoring and alerting about fire hazards. The system includes features to display air clarity, CO levels, and gas detection. The app is currently in development as part of an engineering design class project.
 
 ## Features
@@ -60,25 +62,6 @@ The app supports multiple languages. You can change the language from the Settin
 - Mandarin
 - Hindi
 
-## Contribution
-
-Contributions are welcome! Follow these steps to contribute:
-
-1. **Fork the repository**
-2. **Create a new branch:**
-    ```sh
-    git checkout -b feature/your-feature-name
-    ```
-3. **Make your changes**
-4. **Commit your changes:**
-    ```sh
-    git commit -m 'Add some feature'
-    ```
-5. **Push to the branch:**
-    ```sh
-    git push origin feature/your-feature-name
-    ```
-6. **Open a pull request**
 
 ## License
 
