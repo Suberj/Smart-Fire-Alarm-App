@@ -86,6 +86,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [your-email@example.com](mailto:your-email@example.com)
+Your Name - [josh.suber3@gmail.com](mailto:your-email@example.com)
 
 Project Link: [https://github.com/your-username/smart-fire-detector](https://github.com/your-username/smart-fire-detector)
