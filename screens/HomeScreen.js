@@ -1,13 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useColor } from '../ColorContext';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
-  const { getColor } = useColor();
+  const { getColor, safetyVariable, setSafetyVariable } = useColor();
+  const { t } = useTranslation();
+  const [timer, setTimer] = useState(0);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1);
+        setSafetyVariable((prevSafetyVariable) => prevSafetyVariable + 1);
+      }, 1000);
+    } else if (!isTimerRunning && timer !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
 
   const handleButtonPress = () => {
-    Alert.alert("Notification", "The Alarm is Deactivated");
+    if (isTimerRunning) {
+      setIsTimerRunning(false);
+      Alert.alert(t("notification"), `${t("alarm_deactivated")}.`);
+      setTimer(0);
+    } else {
+      Alert.alert(t("notification"), t("alarm_deactivated"));
+    }
+  };
+
+  const handleTestButtonPress = () => {
+    setIsTimerRunning(true);
+  };
+
+  const handleResetButtonPress = () => {
+    setSafetyVariable(0);
+    Alert.alert(t("notification"), t("safety_variable_reset"));
   };
 
   const getTransparentColor = (opacity) => {
@@ -23,19 +55,19 @@ export default function HomeScreen() {
   const getStatusText = () => {
     const color = getColor();
     if (color === '#00C853') {
-      return 'All Safe';
+      return t('all_safe');
     } else if (color === '#FFD700') {
-      return 'Caution';
+      return t('caution');
     } else if (color === '#FF3B30') {
-      return 'Danger';
+      return t('danger');
     }
-    return 'All Clear';
+    return t('all_clear');
   };
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { backgroundColor: getColor() }]}>
-        <Text style={styles.headerText}>HOME</Text>
+        <Text style={styles.headerText}>{t('home')}</Text>
       </View>
       <View style={styles.mainContent}>
         <Text style={styles.status}>{getStatusText()}</Text>
@@ -46,7 +78,15 @@ export default function HomeScreen() {
             <Ionicons name="power" size={64} color="black" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.timer}>0:00</Text>
+        <Text style={styles.timer}>{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, '0')}`}</Text>
+      </View>
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity style={styles.testButton} onPress={handleTestButtonPress}>
+          <Text style={styles.testButtonText}>Test</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.resetButton} onPress={handleResetButtonPress}>
+          <Text style={styles.resetButtonText}>Reset</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -106,5 +146,31 @@ const styles = StyleSheet.create({
     fontSize: 34,
     color: '#000',
     marginTop: 160,
+  },
+  bottomButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 30,
+    marginBottom: 30,
+  },
+  testButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  testButtonText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  resetButton: {
+    backgroundColor: '#FF3B30',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  resetButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });

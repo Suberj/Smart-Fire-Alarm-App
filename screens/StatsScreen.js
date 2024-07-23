@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useColor } from '../ColorContext';
+import { useTranslation } from 'react-i18next';
 
 export default function StatsScreen() {
   const [selectedTab, setSelectedTab] = useState('Air Clarity');
   const { getColor, safetyVariable } = useColor();
+  const { t } = useTranslation();
 
   const getTransparentColor = (opacity) => {
     const color = getColor();
@@ -19,38 +21,38 @@ export default function StatsScreen() {
   const getStatusText = () => {
     const color = getColor();
     if (color === '#00C853') {
-      return 'All Clear';
+      return t('all_safe');
     } else if (color === '#FFD700') {
-      return 'Caution';
+      return t('caution');
     } else if (color === '#FF3B30') {
-      return 'Danger';
+      return t('danger');
     }
-    return 'All Clear';
+    return t('all_clear');
   };
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { backgroundColor: getColor() }]}>
-        <Text style={styles.headerText}>Statistics</Text>
+        <Text style={styles.headerText}>{t('statistics')}</Text>
       </View>
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'Air Clarity' && { backgroundColor: getColor() }]}
           onPress={() => setSelectedTab('Air Clarity')}
         >
-          <Text style={[styles.tabText, selectedTab === 'Air Clarity' && styles.tabTextSelected]}>Air Clarity</Text>
+          <Text style={[styles.tabText, selectedTab === 'Air Clarity' && styles.tabTextSelected]}>{t('air_clarity')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'CO' && { backgroundColor: getColor() }]}
           onPress={() => setSelectedTab('CO')}
         >
-          <Text style={[styles.tabText, selectedTab === 'CO' && styles.tabTextSelected]}>CO</Text>
+          <Text style={[styles.tabText, selectedTab === 'CO' && styles.tabTextSelected]}>{t('CO')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'Gas' && { backgroundColor: getColor() }]}
           onPress={() => setSelectedTab('Gas')}
         >
-          <Text style={[styles.tabText, selectedTab === 'Gas' && styles.tabTextSelected]}>Gas</Text>
+          <Text style={[styles.tabText, selectedTab === 'Gas' && styles.tabTextSelected]}>{t('gas')}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.mainContent}>

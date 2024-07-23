@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColor } from '../ColorContext';
+import { useTranslation } from 'react-i18next';
 
 export default function SettingsScreen() {
   const { getColor } = useColor();
-  const [language, setLanguage] = useState('English');
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(t('english'));
   const [modalVisible, setModalVisible] = useState(false);
   const [profileSettingsVisible, setProfileSettingsVisible] = useState(false);
-  const [name, setName] = useState("User's Name");
-  const [pronoun, setPronoun] = useState('He/Him');
+  const [name, setName] = useState(t('insert_name'));
+  const [pronoun, setPronoun] = useState(t('pronouns'));
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
@@ -20,20 +22,33 @@ export default function SettingsScreen() {
         const savedName = await AsyncStorage.getItem('name');
         const savedPronoun = await AsyncStorage.getItem('pronoun');
         const savedProfileImage = await AsyncStorage.getItem('profileImage');
+        const savedLanguage = await AsyncStorage.getItem('language');
         if (savedName) setName(savedName);
         if (savedPronoun) setPronoun(savedPronoun);
         if (savedProfileImage) setProfileImage(savedProfileImage);
+        if (savedLanguage) {
+          switch(savedLanguage) {
+            case 'en': setLanguage(t('english')); break;
+            case 'es': setLanguage(t('spanish')); break;
+            case 'fr': setLanguage(t('french')); break;
+            case 'zh': setLanguage(t('mandarin')); break;
+            case 'hi': setLanguage(t('hindi')); break;
+            default: setLanguage(t('english'));
+          }
+        }
       } catch (error) {
         console.error('Failed to load profile data', error);
       }
     };
 
     loadProfileData();
-  }, []);
+  }, [t]);
 
-  const handleLanguageChange = async (lang) => {
+  const handleLanguageChange = async (lang, lngCode) => {
     setLanguage(lang);
     setModalVisible(false);
+    i18n.changeLanguage(lngCode);
+    await AsyncStorage.setItem('language', lngCode);
   };
 
   const pickImage = async () => {
@@ -60,6 +75,37 @@ export default function SettingsScreen() {
     }
   };
 
+  const confirmDeleteProfile = () => {
+    Alert.alert(
+      t('delete_profile'),
+      t('are_you_sure'),
+      [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('ok'),
+          onPress: deleteProfileData,
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const deleteProfileData = async () => {
+    try {
+      await AsyncStorage.removeItem('name');
+      await AsyncStorage.removeItem('pronoun');
+      await AsyncStorage.removeItem('profileImage');
+      setName(t('insert_name'));
+      setPronoun(t('pronouns'));
+      setProfileImage(null);
+    } catch (error) {
+      console.error('Failed to delete profile data', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.header, { backgroundColor: getColor() }]}>
@@ -75,21 +121,21 @@ export default function SettingsScreen() {
       </View>
       <View style={styles.mainContent}>
         <View style={styles.row}>
-          <TouchableOpacity style={[styles.languageButton, { backgroundColor: getColor() }]} onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonText}>Language</Text>
+          <TouchableOpacity style={[styles.languageButton, { backgroundColor: '#D3D3D3' }]} onPress={() => setModalVisible(true)}>
+            <Text style={styles.buttonText}>{t('language')}</Text>
           </TouchableOpacity>
           <View style={styles.languageDisplay}>
             <Text style={styles.buttonText}>{language}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.largeButton}>
-          <Text style={styles.buttonText}>Link Devices</Text>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]}>
+          <Text style={styles.buttonText}>{t('link_devices')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.largeButton} onPress={() => setProfileSettingsVisible(true)}>
-          <Text style={styles.buttonText}>Profile Settings</Text>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]} onPress={() => setProfileSettingsVisible(true)}>
+          <Text style={styles.buttonText}>{t('profile_settings')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.largeButton}>
-          <Text style={styles.buttonText}>Delete Profile</Text>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]} onPress={confirmDeleteProfile}>
+          <Text style={styles.buttonText}>{t('delete_profile')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -104,24 +150,42 @@ export default function SettingsScreen() {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Select Language</Text>
+            <Text style={styles.modalText}>{t('select_language')}</Text>
             <TouchableOpacity
-              style={[styles.modalButton, language === 'English' && styles.modalButtonSelected]}
-              onPress={() => handleLanguageChange('English')}
+              style={[styles.modalButton, language === t('english') && styles.modalButtonSelected]}
+              onPress={() => handleLanguageChange(t('english'), 'en')}
             >
-              <Text style={styles.textStyle}>English</Text>
+              <Text style={styles.textStyle}>{t('english')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.modalButton, language === 'Spanish' && styles.modalButtonSelected]}
-              onPress={() => handleLanguageChange('Spanish')}
+              style={[styles.modalButton, language === t('spanish') && styles.modalButtonSelected]}
+              onPress={() => handleLanguageChange(t('spanish'), 'es')}
             >
-              <Text style={styles.textStyle}>Spanish</Text>
+              <Text style={styles.textStyle}>{t('spanish')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, language === t('french') && styles.modalButtonSelected]}
+              onPress={() => handleLanguageChange(t('french'), 'fr')}
+            >
+              <Text style={styles.textStyle}>{t('french')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, language === t('mandarin') && styles.modalButtonSelected]}
+              onPress={() => handleLanguageChange(t('mandarin'), 'zh')}
+            >
+              <Text style={styles.textStyle}>{t('mandarin')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.modalButton, language === t('hindi') && styles.modalButtonSelected]}
+              onPress={() => handleLanguageChange(t('hindi'), 'hi')}
+            >
+              <Text style={styles.textStyle}>{t('hindi')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButtonClose]}
               onPress={() => setModalVisible(!modalVisible)}
             >
-              <Text style={styles.textStyle}>Close</Text>
+              <Text style={styles.textStyle}>{t('close')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -138,27 +202,27 @@ export default function SettingsScreen() {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Profile Settings</Text>
+            <Text style={styles.modalText}>{t('profile_settings')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter Name"
+              placeholder={t('enter_name')}
               value={name}
               onChangeText={setName}
             />
             <TextInput
               style={styles.input}
-              placeholder="Enter Pronoun"
+              placeholder={t('enter_pronoun')}
               value={pronoun}
               onChangeText={setPronoun}
             />
             <TouchableOpacity style={styles.modalButton} onPress={pickImage}>
-              <Text style={styles.textStyle}>Pick an Image</Text>
+              <Text style={styles.textStyle}>{t('pick_image')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButtonClose]}
               onPress={saveProfileData}
             >
-              <Text style={styles.textStyle}>Save</Text>
+              <Text style={styles.textStyle}>{t('save')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -170,7 +234,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0eded',
+    backgroundColor: '#F5F5F5',
   },
   header: {
     paddingVertical: 40,
@@ -228,7 +292,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#D3D3D3',
     justifyContent: 'center',
     alignItems: 'center',
   },
