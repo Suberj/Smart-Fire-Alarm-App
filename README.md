@@ -1,4 +1,4 @@
-Smart Fire Alarm App
+## Smart Fire Alarm App
 This is a React Native application designed to function as a smart fire alarm. The application features a user interface that displays the current safety status, statistics, and settings. Users can also simulate fire alarm tests and reset the safety variable.
 
 Features
