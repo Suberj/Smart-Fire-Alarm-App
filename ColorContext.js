@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const ColorContext = createContext();
 
 export const ColorProvider = ({ children }) => {
-  const [safetyVariable, setSafetyVariable] = useState(10); // Example value
+  const [safetyVariable, setSafetyVariable] = useState(1); // Example value
 
   const getColor = () => {
     if (safetyVariable < 20) {
