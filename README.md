@@ -43,15 +43,23 @@ Once the application is running, you can navigate through the app using the bott
 
 ### Home Screen
 
-The Home screen displays the current status of the environment based on the safety variable. Press the power button to start/stop monitoring.
+The Home screen displays the current status of the environment based on the safety variable. Press the power button to start/stop monitoring. 
+
+![](Screenshots/home_green.png)
+![](Screenshots/yellow.png)
+![](Screenshots/red.png)
 
 ### Statistics Screen
 
 The Statistics screen provides detailed information about air clarity, CO levels, and gas presence. The background color and text change dynamically based on the safety status.
 
+![](Screenshots/stats_green.png)
+
 ### Settings Screen
 
 The Settings screen allows you to manage your profile, link devices, and select the app language. You can also delete your profile from this screen.
+
+![](Screenshots/settings_green.png)
 
 ## Multi-language Support
 
@@ -62,6 +70,8 @@ The app supports multiple languages. You can change the language from the Settin
 - Mandarin
 - Hindi
 
+![](Screenshots/language.png)
+![](Screenshots/spanish.png)
 
 ## License
 
