@@ -6,9 +6,9 @@ export const ColorProvider = ({ children }) => {
   const [safetyVariable, setSafetyVariable] = useState(1); // Example value
 
   const getColor = () => {
-    if (safetyVariable < 20) {
+    if (safetyVariable < 2) {
       return '#00C853'; // Green
-    } else if (safetyVariable >= 20 && safetyVariable <= 50) {
+    } else if (safetyVariable >= 2 && safetyVariable <= 30) {
       return '#FFD700'; // Yellow
     } else {
       return '#FF3B30'; // Red

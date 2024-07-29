@@ -3,18 +3,26 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useColor } from '../ColorContext';
 import { useTranslation } from 'react-i18next';
+import * as Linking from 'expo-linking';
 
 export default function HomeScreen() {
   const { getColor, safetyVariable, setSafetyVariable } = useColor();
   const { t } = useTranslation();
   const [timer, setTimer] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const phoneNumber = '3159828135';  // desired phone number "911"
 
   useEffect(() => {
     let interval = null;
     if (isTimerRunning) {
       interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
+        setTimer((prevTimer) => {
+          const newTimer = prevTimer + 1;
+          if (newTimer === 30) {
+            makePhoneCall();
+          }
+          return newTimer;
+        });
         setSafetyVariable((prevSafetyVariable) => prevSafetyVariable + 1);
       }, 1000);
     } else if (!isTimerRunning && timer !== 0) {
@@ -23,10 +31,16 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, [isTimerRunning]);
 
+  const makePhoneCall = () => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url)
+      .catch((err) => console.error('Error making phone call', err));
+  };
+
   const handleButtonPress = () => {
     if (isTimerRunning) {
       setIsTimerRunning(false);
-      Alert.alert(t("notification"), `${t("alarm_deactivated")}.`);
+      Alert.alert(t("notification"), `${t("alarm_deactivated")}. ${t("added_seconds", { seconds: timer })}`);
       setTimer(0);
     } else {
       Alert.alert(t("notification"), t("alarm_deactivated"));
