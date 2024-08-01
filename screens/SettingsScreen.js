@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Image, Aler
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useColor } from '../ColorContext';
+// import { useColor } from '../ColorContext';
 import { useTranslation } from 'react-i18next';
+import { useTimer } from '../TimerContext';
 
 export default function SettingsScreen() {
-  const { getColor } = useColor();
+  // const { getColor } = useColor();
+  const { startTimer, stopTimer, color } = useTimer();
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState(t('english'));
   const [modalVisible, setModalVisible] = useState(false);
@@ -108,7 +110,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { backgroundColor: getColor() }]}>
+      <View style={[styles.header, { backgroundColor: color }]}>
         <Text style={styles.headerText}>{name}</Text>
         <Text style={styles.subHeaderText}>{pronoun}</Text>
         <View style={styles.profileIcon}>
@@ -128,13 +130,13 @@ export default function SettingsScreen() {
             <Text style={styles.buttonText}>{language}</Text>
           </View>
         </View>
-        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]}>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: color }]}>
           <Text style={styles.buttonText}>{t('link_devices')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]} onPress={() => setProfileSettingsVisible(true)}>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: color }]} onPress={() => setProfileSettingsVisible(true)}>
           <Text style={styles.buttonText}>{t('profile_settings')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.largeButton, { backgroundColor: getColor() }]} onPress={confirmDeleteProfile}>
+        <TouchableOpacity style={[styles.largeButton, { backgroundColor: color }]} onPress={confirmDeleteProfile}>
           <Text style={styles.buttonText}>{t('delete_profile')}</Text>
         </TouchableOpacity>
       </View>
